@@ -10,6 +10,8 @@
 
 class SortComparison {
 
+    static final int INSERTION_CUTOFF = 10;
+
     /**
      * Sorts an array of doubles using InsertionSort.
      * This method is static, thus it can be called as SortComparison.sort(a)
@@ -57,10 +59,58 @@ class SortComparison {
      *
      */
     static double [] mergeSort (double a[]){
-
+        double[] aux = new double[a.length];
+        mergeSort(a, aux, 0, a.length - 1);
         //todo: implement the sort
         return a;
     }//end mergesort
+
+    private static double[] mergeSort(double a[], double[] aux, int lo, int hi) {
+        if (hi <= (lo + INSERTION_CUTOFF - 1)) {
+            insertionSort(a, lo, hi);
+            return a;
+        }
+        if (hi <= lo) return a;
+        int mid = lo + (hi - lo) / 2;
+        mergeSort(a, aux, lo, mid);             //Deals with left subtrees (if taken as BST traversal)
+        mergeSort(a, aux, mid + 1, hi);      //Deals with right subtrees
+        merge(a, aux, lo, mid, hi);             //Slaps all the subtrees together in sorted order
+        return a;
+    }
+
+    private static double[] merge(double[] a, double[] aux, int lo, int mid, int hi) {
+        for (int k = lo; k <= hi; k++) aux[k] = a[k]; //Copy contents of a into aux
+        int i = lo;
+        int j = mid + 1;
+        //'i' starts at the first subarray relative to passed parameters
+        //'j' starts at the second subarray relative to the past parameters
+        // EXAMPLE:
+        // KEY:   lo       mid  |             hi
+        // INDX:  i             |    j
+        // VALS:  3    7    8   |    6    8    3
+        for (int k = lo; k <= hi; k++) {
+            if (i > mid)                a[k] = aux[j++];//if all of the left is already sorted pretty much
+            else if (j > hi)            a[k] = aux[i++];//if all of the right has been sorted
+            else if (aux[j] < aux[i])   a[k] = aux[j++];//Where most of the sorting happens
+            else                        a[k] = aux[i++];//As above.
+        }
+        return a;
+    }
+
+    private static double[] insertionSort(double[] a, int lo, int hi) {
+        double cmp; int j;
+        for (int i = lo; i <= hi; i++) {      //Less than or equal to account for ranges smaller than a.length
+            cmp = a[i];
+            j = i;
+            while (j > 0 && a[j - 1] > cmp) {
+                a[j] = a[j - 1];
+                j--;
+            }
+            a[j] = cmp;
+        }
+        return a;
+    }
+
 
     /**
      * Sorts an array of doubles using Shell Sort.

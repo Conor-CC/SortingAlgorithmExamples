@@ -5,9 +5,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 //-------------------------------------------------------------------------
 /**
@@ -21,7 +22,7 @@ public class SortComparisonTest
 {
 
 
-    static double[] a = {2377.88, 2910.66, 8458.14, 1522.08, 5855.37, 1934.75, 8106.23, 1735.31, 4849.83, 1518.63};
+    static double[] a; //= {2377.88, 2910.66, 8458.14, 1522.08, 5855.37, 1934.75, 8106.23, 1735.31, 4849.83, 1518.63};
 
     //~ Constructor ........................................................
     @Test
@@ -53,13 +54,33 @@ public class SortComparisonTest
      */
     public static void main(String[] args)
     {
+        a = readInFile(a, "numbers10.txt");
         for (Double d : a)
             System.out.print(d + "    ");
         System.out.println("\n");
-        a = SortComparison.shellSort(a);
+        a = SortComparison.mergeSort(a);
         for (Double d : a)
             System.out.print(d + "    ");
         //TODO: implement this method
+    }
+
+    private static double[] readInFile(double[] a, String fileName) {
+        File file = new File("src/" + fileName);
+        Scanner doubleScanner;
+        ArrayList<Double> doubles = new ArrayList<Double>();
+        try {
+            doubleScanner = new Scanner(file);
+            while (doubleScanner.hasNextDouble()){
+                doubles.add(doubleScanner.nextDouble());
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        a = new double[doubles.size()];
+        for (int i = 0; i < a.length; i++) {
+            a[i] = (Double) doubles.get(i);
+        }
+        return a;
     }
 
 
